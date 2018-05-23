@@ -30,7 +30,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ApiCallActivity extends AppCompatActivity {
     private static final String TAG="[apicall] ";
-    private List<Repo> myRepos=new ArrayList<>();
+    private Anime myAnime = new Anime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +38,14 @@ public class ApiCallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_api_call);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("https://api.jikan.moe/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
-        final githubInterface myGithubService = retrofit.create(githubInterface.class);
+        final JikanInterface myJikanService = retrofit.create(JikanInterface.class);
 
-        myGithubService.getMeRepos("rickchen2").enqueue(new Callback<ResponseBody>() {
+        myJikanService.getAnimeRequest(1, "episodes", 2).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
@@ -55,13 +55,15 @@ public class ApiCallActivity extends AppCompatActivity {
                     try {
                         String responseString=response.body().string();
                         ((TextView)findViewById(R.id.response)).setText(responseString);
-                        Log.d(TAG,responseString);
-                        JSONArray jsonObject=new JSONArray(responseString);
-                        //
-                         Type type=new TypeToken<List<Repo>>(){}.getType();
-                         myRepos=new Gson().fromJson(jsonObject.toString(),type);
-                        //Repo repo=new Gson().fromJson(jsonObject.toString(),Repo.class);
-
+//                        Log.d(TAG,responseString);
+//                        JSONArray jsonObject=new JSONArray(responseString);
+//                        //
+//                         Type type=new TypeToken<List<Repo>>(){}.getType();
+//                         myRepos=new Gson().fromJson(jsonObject.toString(),type);
+//                        //Repo repo=new Gson().fromJson(jsonObject.toString(),Repo.class);
+                        JSONObject jsonObject = new JSONObject(responseString);
+                        myAnime = new Gson().fromJson(jsonObject.toString(), Anime.class);
+                        Log.d(TAG, myAnime.toString());
                     } catch (IOException| JSONException  e) {
                         e.printStackTrace();
                     }
@@ -75,14 +77,19 @@ public class ApiCallActivity extends AppCompatActivity {
             }
         });
 
-        logRepos();
+        //logAnime();
 
     }
 
-    private void logRepos(){
-        for (Repo repo:myRepos) {
-            Log.d(TAG, repo.getId()+"---"+repo.getUserName());
-        }
-
+    private void logAnime(){
+        Log.d(TAG, myAnime.toString());
     }
+//    private void logRepos(){
+//        for (Repo repo:myRepos) {
+//            Log.d(TAG, repo.getId()+"---"+repo.getUserName());
+//        }
+//
+//    }
+
+
 }
