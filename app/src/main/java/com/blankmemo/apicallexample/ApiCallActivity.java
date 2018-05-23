@@ -64,13 +64,16 @@ public class ApiCallActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(responseString);
                         myAnime = new Gson().fromJson(jsonObject.toString(), Anime.class);
                         Log.d(TAG, myAnime.toString());
-                    } catch (IOException| JSONException  e) {
+                    }
+                    // error in the api response
+                    catch (IOException| JSONException  e) {
                         e.printStackTrace();
+
                     }
                 }
 
             }
-
+// cannot connect to the api
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
